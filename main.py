@@ -1,14 +1,15 @@
-from typing import Optional
-
 from fastapi import FastAPI
+from . import models
+from .database import engine
 
-app = FastAPI()
+from .routers import order,user,auth
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+app=FastAPI()
+models.Base.metadata.create_all(engine)
+app.include_router(order.router)
+app.include_router(user.router)
+app.include_router(auth.router)
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+
+
